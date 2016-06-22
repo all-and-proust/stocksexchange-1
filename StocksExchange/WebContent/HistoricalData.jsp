@@ -74,7 +74,12 @@ int freq = Integer.parseInt(frequency);
 <br/>
 <br/>
 <%
-if(howClose <= 50.0) {
+if(high1 == low1) {
+%>
+<font color="blue"><b>How Close: Need More Data</b></font>
+<%
+}
+else if(howClose <= 50.0) {
 %>
 <font color="green"><b>How Close: <%= howClose %> percent!</b></font>
 <%
@@ -95,6 +100,8 @@ Selling Price (3% increase to buying price): <%= targetprice %>
 <font color="green">How Close value: 0% to 50% - Selling price is closer to 20-day low. Best time to buy.</font>
 <br/>
 <font color="red">How Close value: 51% and up - Selling price is closer to 20-day high. NOT best time to buy.</font>
+<br/>
+<font color="blue">How Close value: Need More Data - 20-day high and 20-day low are equal. NOT best time to buy.</font>
 <br/>
 <br/>
 <form method="POST" action="AnalyzeStock.do">
