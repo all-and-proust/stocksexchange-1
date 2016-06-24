@@ -34,17 +34,17 @@
 		<td>${stockScore.totalProfit}</td>
 	</tr>
 	<tr>
-		<td>20-day low:</td>
+		<td>10-day low:</td>
 		<td>${stockScore.low}</td>
 	</tr>
 	<tr>
-		<td>20-day high:</td>
+		<td>10-day high:</td>
 		<td>${stockScore.high}</td>
 	</tr>
 </table>
 <br/>
 <br/>
-How close is the target price to 20-day high: ${stockScore.howClose} percent!
+How Close: ${stockScore.howClose} percent!
 <br/>
 <br/>
 The lower the HOW CLOSE, the better the investment!

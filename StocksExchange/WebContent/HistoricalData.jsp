@@ -97,11 +97,11 @@ Buying Price today: <%= cps %>
 <br/>
 Selling Price (3% increase to buying price): <%= targetprice %>
 <br/>
-<font color="green">How Close value: 0% to 50% - Selling price is closer to 20-day low. Best time to buy.</font>
+<font color="green">How Close value: 0% to 50% - Selling price is closer to 10-day low. Best time to buy.</font>
 <br/>
-<font color="red">How Close value: 51% and up - Selling price is closer to 20-day high. NOT best time to buy.</font>
+<font color="red">How Close value: 51% and up - Selling price is closer to 10-day high. NOT best time to buy.</font>
 <br/>
-<font color="blue">How Close value: Need More Data - 20-day high and 20-day low are equal. NOT best time to buy.</font>
+<font color="blue">How Close value: Need More Data - 10-day high and 10-day low are equal. NOT best time to buy.</font>
 <br/>
 <br/>
 <form method="POST" action="AnalyzeStock.do">
