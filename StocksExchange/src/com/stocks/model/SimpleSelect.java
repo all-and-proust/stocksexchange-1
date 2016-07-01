@@ -3,6 +3,12 @@ package com.stocks.model;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.net.URL;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -264,7 +270,7 @@ public class SimpleSelect {
         }		
 	}
 
-	public void importData(List<Map<String,String>> stocksList){
+	public int importData(List<Map<String,String>> stocksList){
 		Connection conn = null;
 		try
         {
@@ -278,22 +284,41 @@ public class SimpleSelect {
 						tradingDate = nextTokenArr[2] + "-" + nextTokenArr[0] +"-" + nextTokenArr[1];
 					}
 		        } else {
-		        	String sql = "INSERT INTO all_active_stocks(id, stock_symbol,last_trading_price, stock_value, closing_date) " 
-	        				  +"VALUES(ALL_ACTIVE_STOCKS_SEQ.NEXTVAL,?,?,?,?)";
+		        	String sql = "INSERT INTO all_active_stocks(id, stock_symbol,last_trading_price, stock_value, stock_amount, closing_date) " 
+	        				  +"VALUES(ALL_ACTIVE_STOCKS_SEQ.NEXTVAL,?,?,?,?,?)";
 		        	PreparedStatement prest = conn.prepareStatement(sql);
 		        	prest.setString(1, sds.get("securitySymbol"));
 		        	prest.setDouble(2, Double.parseDouble(sds.get("lastTradedPrice")));
 		        	prest.setDouble(3, Double.parseDouble(sds.get("totalVolume")));
-		        	prest.setDate(4,java.sql.Date.valueOf(tradingDate));
+		        	prest.setBigDecimal(4, new BigDecimal(Double.parseDouble(sds.get("totalVolume")) * Double.parseDouble(sds.get("lastTradedPrice"))).setScale(2, RoundingMode.CEILING));
+		        	prest.setDate(5,java.sql.Date.valueOf(tradingDate));
 		        	prest.executeUpdate();
 		        }
 			}
-			conn.close();
+			
+			// get the top 50 most active stocks from PSE and populate the most_active_stocks table
+			String sql2 = "INSERT INTO MOST_ACTIVE_STOCKS (ID, STOCK_SYMBOL, LAST_TRADING_PRICE, STOCK_VALUE, CLOSING_DATE) " +
+			    "SELECT most_active_stocks_seq.NEXTVAL, a.STOCK_SYMBOL,a.LAST_TRADING_PRICE, a.STOCK_AMOUNT, a.CLOSING_DATE " +
+				"FROM (SELECT ROWNUM rnum, b.* " +
+			    "      FROM (select stock_symbol, last_trading_price, stock_amount, closing_date " +
+				"            from all_active_stocks " +
+				"            WHERE closing_date = ? " +
+			    "            order by stock_amount desc " +
+				"      ) b " +
+				") a " +
+			    "WHERE a.rnum BETWEEN 1 AND 50";
+
+             PreparedStatement prest2 = conn.prepareStatement(sql2);
+             prest2.setDate(1,java.sql.Date.valueOf(tradingDate));
+             prest2.executeUpdate();
+			 conn.close();
 		}
         catch(Exception e)
         {
-                System.out.println("Exception while inserting stock records: " + e);                  
-        }		
+                System.out.println("Exception while inserting stock records: " + e);
+                return 1;
+        }
+		return 0;
 	}
 	
 	public List<Stock> getAllStocks() {
@@ -302,7 +327,6 @@ public class SimpleSelect {
 		  try {
 			  DBConnection db = new DBConnection();
 			  conn = db.getConnection();
-			  System.out.println("Connected to the database");
 			  
 			  String sql = "select stock_symbol, count(*) as frequency "
 				  + "from most_active_stocks "
@@ -324,6 +348,49 @@ public class SimpleSelect {
 			  e.printStackTrace();
 		  }
 		  return stocks;
+	}
+	
+	public List<Map<String,String>> viewDataFromPSE(){
+		List<Map<String,String>> stocksList = new ArrayList<Map<String,String>>();
+		try {
+			// live feed from PSE
+			URL url = new URL("http://pse.com.ph/stockMarket/home.html?method=getSecuritiesAndIndicesForPublic&ajax=true");
+			URLConnection con = url.openConnection();
+			InputStream is =con.getInputStream();
+			
+			BufferedReader br = new BufferedReader(new InputStreamReader(is));
+			String line = null;
+			
+			int ctr = 0;
+	        while ((line = br.readLine()) != null) {
+	        	String[] lineAr = line.split("\\{");
+	        	for(String ln : lineAr){
+	        		ctr = ctr +1;
+	        		if (ctr == 1) 
+	        			continue;
+	        		if(ln.contains("PSEi"))
+	        			break;
+	        		
+	        		String ln1 = ln.substring(0, ln.length()-2);
+	        		String[] xAr =ln1.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+	        		
+	        		Map<String,String> stockdetails = new HashMap<String,String>();
+	        		for (String xl : xAr){
+	        			String xlvalue = xl.replace(",", "");
+	        			String[] xlvalue2 = xlvalue.split(":");
+	        			stockdetails.put(xlvalue2[0].substring(1, xlvalue2[0].length()-1), xlvalue2[1].substring(1, xlvalue2[1].length()-1));
+	        			//if the value has time like "07/01/2016 03:20 PM", we need this few lines of codes
+	        			if(ctr == 2 && xlvalue2[0].substring(1, xlvalue2[0].length()-1).equals("securityAlias")){
+	        				stockdetails.put("securityAlias",xlvalue2[1].substring(1, xlvalue2[1].length()) + ":" + xlvalue2[2].substring(0, xlvalue2[2].length()-1));
+	        			}
+	        		}
+	        		stocksList.add(stockdetails);
+	        	}
+	        }
+		} catch (Exception e){
+			System.out.println("Something went wrong: " + e);
+		}
+		return stocksList;
 	}
 
 }

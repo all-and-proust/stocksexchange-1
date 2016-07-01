@@ -30,7 +30,9 @@
 </table>
 <br/>
 <br/>
-<a href="DataImport.do">Import Data Now!</a>
+<a href="DataImport.do">Import Data From CSV!</a>
+<br/>
+<a href="DataImportPSEView.do">Import Data Directly from PSE!</a>
 <br/>
 <a href="AllStocks.do">View All Stocks With Frequency</a>
 </body>

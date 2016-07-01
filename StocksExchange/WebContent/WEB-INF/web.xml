@@ -29,6 +29,16 @@
 	<servlet-class>com.stocks.web.AllStocks</servlet-class>
 </servlet>
 
+<servlet>
+	<servlet-name>Data Import PSE View</servlet-name>
+	<servlet-class>com.stocks.web.DataImportPSEView</servlet-class>
+</servlet>
+
+<servlet>
+	<servlet-name>Data Import PSE</servlet-name>
+	<servlet-class>com.stocks.web.DataImportPSE</servlet-class>
+</servlet>
+
 <servlet-mapping>
 	<servlet-name>Most Active</servlet-name>
 	<url-pattern>/MostActive.do</url-pattern>
@@ -52,6 +62,16 @@
 <servlet-mapping>
 	<servlet-name>All Stocks</servlet-name>
 	<url-pattern>/AllStocks.do</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>Data Import PSE View</servlet-name>
+	<url-pattern>/DataImportPSEView.do</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>Data Import PSE</servlet-name>
+	<url-pattern>/DataImportPSE.do</url-pattern>
 </servlet-mapping>
 
 </web-app>
