@@ -264,6 +264,38 @@ public class SimpleSelect {
         }		
 	}
 
+	public void importData(List<Map<String,String>> stocksList){
+		Connection conn = null;
+		try
+        {
+			DBConnection db = new DBConnection();
+			conn = db.getConnection();
+			String tradingDate = "";
+			for(Map<String,String> sds : stocksList){
+				if(sds.get("lastTradedPrice").equals("DATE")){
+					String[] nextTokenArr = sds.get("securityAlias").substring(0, 10).split("/");
+					if(nextTokenArr.length > 1){
+						tradingDate = nextTokenArr[2] + "-" + nextTokenArr[0] +"-" + nextTokenArr[1];
+					}
+		        } else {
+		        	String sql = "INSERT INTO all_active_stocks(id, stock_symbol,last_trading_price, stock_value, closing_date) " 
+	        				  +"VALUES(ALL_ACTIVE_STOCKS_SEQ.NEXTVAL,?,?,?,?)";
+		        	PreparedStatement prest = conn.prepareStatement(sql);
+		        	prest.setString(1, sds.get("securitySymbol"));
+		        	prest.setDouble(2, Double.parseDouble(sds.get("lastTradedPrice")));
+		        	prest.setDouble(3, Double.parseDouble(sds.get("totalVolume")));
+		        	prest.setDate(4,java.sql.Date.valueOf(tradingDate));
+		        	prest.executeUpdate();
+		        }
+			}
+			conn.close();
+		}
+        catch(Exception e)
+        {
+                System.out.println("Exception while inserting stock records: " + e);                  
+        }		
+	}
+	
 	public List<Stock> getAllStocks() {
 		  Connection conn = null;
 		  List<Stock> stocks = new ArrayList<Stock>();
