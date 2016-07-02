@@ -1,10 +1,11 @@
-<%@ page import="java.util.*,com.stocks.model.*,java.math.*" %>
+<%@ page import="java.util.*,com.stocks.model.*,java.math.*,java.text.*" %>
 <html>
 <head>
 	<title>Historical Data</title>
 </head>
 <body>
 <%
+DecimalFormat df = new DecimalFormat("#,###.00");
 Date latestMostActive = (Date)((Map<String,Object>)request.getAttribute("historicalMap")).get("latestMostActive");
 String symbol = request.getParameter("symbol");
 String frequency = request.getParameter("frequency");
@@ -46,7 +47,7 @@ int freq = Integer.parseInt(frequency);
 		<td><%= ctr %></td>
 		<td><%= s.getStockSymbol() %></td>
 		<td><%= s.getLastPrice() %></td>
-		<td><%= s.getStockValue() %></td>
+		<td><%= df.format(s.getStockValue()) %></td>
 		<td><%= s.getClosingDate() %></td>
 	</tr>		
 		
@@ -58,7 +59,7 @@ int freq = Integer.parseInt(frequency);
 		<td><%= ctr %></td>
 		<td><%= s.getStockSymbol() %></td>
 		<td><%= s.getLastPrice() %></td>
-		<td><%= s.getStockValue() %></td>
+		<td><%= df.format(s.getStockValue()) %></td>
 		<td><%= s.getClosingDate() %></td>
 	</tr>
 	<%
@@ -95,7 +96,7 @@ else if(howClose.doubleValue() <= 50.0) {
 <br/>
 Buying Price today: <%= cps %>
 <br/>
-Selling Price (3% increase to buying price): <%= targetprice %>
+Selling Price (3% increase to buying price): <%= new BigDecimal(targetprice).setScale(2, RoundingMode.CEILING) %>
 <br/>
 <font color="green">How Close value: 0% to 50% - Selling price is closer to 10-day low. Best time to buy.</font>
 <br/>

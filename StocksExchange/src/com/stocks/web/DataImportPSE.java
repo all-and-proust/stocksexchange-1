@@ -14,6 +14,7 @@ public class DataImportPSE extends HttpServlet {
 		throws IOException, ServletException {
 
 		SimpleSelect ss = new SimpleSelect();
+		ss.removeData(request.getParameter("tradingDate"));
 		List<Map<String,String>> liveDataFromPSE = ss.viewDataFromPSE();
 		int importResult = ss.importData(liveDataFromPSE);
 

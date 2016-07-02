@@ -162,7 +162,7 @@ public class SimpleSelect {
 					Date closingDate = rs2.getDate(4);
 					stock.setStockSymbol(stockSymbol);
 					stock.setLastPrice(lastPrice);
-					stock.setStockValue(stockValue);
+					stock.setStockValue(new BigDecimal(stockValue).setScale(2, RoundingMode.CEILING));
 					stock.setClosingDate(closingDate);
 					stocks.add(stock);
 			    }
@@ -420,4 +420,30 @@ public class SimpleSelect {
 		return stocksList;
 	}
 
+	public int removeData(String tradingDate){
+		Connection conn = null;
+		try
+        {
+			DBConnection db = new DBConnection();
+			conn = db.getConnection();
+			
+			String sql = "DELETE FROM all_active_stocks WHERE closing_date = ? ";
+			PreparedStatement prest = conn.prepareStatement(sql);
+			prest.setDate(1,java.sql.Date.valueOf(tradingDate));
+			prest.executeUpdate();
+
+			String sql2 = "DELETE FROM most_active_stocks WHERE closing_date = ? ";
+			PreparedStatement prest2 = conn.prepareStatement(sql2);
+			prest2.setDate(1,java.sql.Date.valueOf(tradingDate));
+			prest2.executeUpdate();
+
+			conn.close();
+		}
+        catch(Exception e)
+        {
+                System.out.println("Exception while removing stock records: " + e);
+                return 1;
+        }
+		return 0;
+	}
 }

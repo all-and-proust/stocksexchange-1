@@ -1,4 +1,4 @@
-<%@ page import="java.util.*,com.stocks.model.*" %>
+<%@ page import="java.util.*,com.stocks.model.*,java.text.*" %>
 <html>
 <head>
 	<title>Most Active Stocks</title>
@@ -21,6 +21,7 @@
 		<td>How Close</td>
 	</tr>
 	<%
+	DecimalFormat df = new DecimalFormat("#,###.00");
 	List<Stock> stocks = (List<Stock>)request.getAttribute("mostActive");
 	int ctr = 0;
 	for(Stock s: stocks){
@@ -30,15 +31,16 @@
 		<td><%= ctr %></td>
 		<td><a href="HistoricalData.do?symbol=<%= s.getStockSymbol() %>&frequency=<%= s.getFrequency() %>"><%= s.getStockSymbol() %></a></td>
 		<td><%= s.getFrequency() %></td>
-		<td><%= s.getTotalStockValue() %></td>
+		<td><%= df.format(s.getTotalStockValue()) %></td>
 		<td><%= s.getLatestMostActive() %></td>
 		<td><%= s.getLow() %></td>
 		<td><%= s.getHigh() %></td>
 		<td><%= s.getLastPrice() %></td>
 		<td><%= s.getTargetPrice() %></td>
-		<td><%= (s.getPercentHowClose().intValue() == -1) ? "Need More Data" : s.getPercentHowClose() %></td>
+		<td <%= (s.getPercentHowClose().doubleValue() > 0.0 && s.getPercentHowClose().doubleValue() <= 100.0 ) ? "bgcolor='green'" : "" %>><%= (s.getPercentHowClose().intValue() == -1) ? "Need More Data" : s.getPercentHowClose() %></td>
 	</tr>
 	<%
+	
 	}
 	%>
 </table>

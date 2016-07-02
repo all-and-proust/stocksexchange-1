@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Stock {
 	private String stockSymbol;
-	private double stockValue;
+	private BigDecimal stockValue;
 	private double lastPrice;
 	private int frequency;
 	private Date closingDate;
@@ -21,10 +21,10 @@ public class Stock {
 	public void setStockSymbol(String stockSymbol) {
 		this.stockSymbol = stockSymbol;
 	}
-	public double getStockValue() {
+	public BigDecimal getStockValue() {
 		return stockValue;
 	}
-	public void setStockValue(double stockValue) {
+	public void setStockValue(BigDecimal stockValue) {
 		this.stockValue = stockValue;
 	}
 	public double getLastPrice() {
