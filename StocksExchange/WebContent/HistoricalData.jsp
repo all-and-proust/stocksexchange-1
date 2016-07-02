@@ -1,4 +1,4 @@
-<%@ page import="java.util.*,com.stocks.model.*" %>
+<%@ page import="java.util.*,com.stocks.model.*,java.math.*" %>
 <html>
 <head>
 	<title>Historical Data</title>
@@ -64,10 +64,10 @@ int freq = Integer.parseInt(frequency);
 	<%
 		}
 	}
-	double howClose = 0.0;
 	double targetprice = cps * 1.03;
-	howClose = (targetprice-low1)/(high1-low1) * 100;
-	howClose = Math.round(howClose*100.0)/100.0;
+	BigDecimal howClose = new BigDecimal(-1);
+	if(high1 != low1)
+		howClose = new BigDecimal((targetprice-low1)/(high1-low1) * 100).setScale(2, RoundingMode.CEILING);
 	%>
 </table>
 
@@ -79,7 +79,7 @@ if(high1 == low1) {
 <font color="blue"><b>How Close: Need More Data</b></font>
 <%
 }
-else if(howClose <= 50.0) {
+else if(howClose.doubleValue() <= 50.0) {
 %>
 <font color="green"><b>How Close: <%= howClose %> percent!</b></font>
 <%

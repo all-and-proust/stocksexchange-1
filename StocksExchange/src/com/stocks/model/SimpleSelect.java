@@ -30,9 +30,8 @@ public class SimpleSelect {
 		  try {
 			  DBConnection db = new DBConnection();
 			  conn = db.getConnection();
-			  System.out.println("Connected to the database");
 			  
-			  String sql = "select stock_symbol, count(*) as frequency "
+			  String sql = "select stock_symbol, count(*) as frequency, sum(stock_value) total_value "
 				  + "from most_active_stocks "
 				  + "where closing_date IN ( "
 				  + "select a.closedate "
@@ -50,19 +49,49 @@ public class SimpleSelect {
 				  + ") a "
 				  + ") "
 				  + "group by stock_symbol "
-				  + "order by frequency desc";
+				  + "order by frequency desc, total_value desc";
 			    PreparedStatement prest = conn.prepareStatement(sql);
 			    ResultSet rs = prest.executeQuery();
 			    while (rs.next()){
 					Stock stock = new Stock();
 			    	String stockSymbol = rs.getString(1);
 					int frequency = rs.getInt(2);
+					double totalValue = rs.getDouble(3);
 					stock.setStockSymbol(stockSymbol);
-					stock.setFrequency(frequency);					
+					stock.setFrequency(frequency);
+					stock.setTotalStockValue(new BigDecimal(totalValue).setScale(2, RoundingMode.CEILING));
+					Map<String, Object> historicalmap = getHistoricalData(stockSymbol);
+					Date latestMostActive = (Date) historicalmap.get("latestMostActive");
+					stock.setLatestMostActive(latestMostActive);
+					List<Stock> stocksList = (List<Stock>)historicalmap.get("stocksList");
+					int ctr = 0;
+					double low1 = 0.0;
+					double high1 = 0.0;
+					double cps = 0.0;
+					for(Stock s: stocksList){
+						ctr++;
+						if(ctr == 1){
+							low1 = s.getLastPrice();
+						}
+						if(ctr == frequency){
+							high1 = s.getLastPrice();
+						}
+						if(latestMostActive.getTime() == s.getClosingDate().getTime()){
+							cps = s.getLastPrice();
+						}
+					}
+					double targetprice = cps * 1.03;
+					BigDecimal howClose = new BigDecimal(-1);
+					if(high1 != low1)
+						howClose = new BigDecimal((targetprice-low1)/(high1-low1) * 100).setScale(2, RoundingMode.CEILING);
+					stock.setPercentHowClose(howClose);
+					stock.setHigh(high1);
+					stock.setLow(low1);
+					stock.setLastPrice(cps);
+					stock.setTargetPrice(new BigDecimal(targetprice).setScale(2, RoundingMode.CEILING));
 					stocks.add(stock);
 			    }
 			  conn.close();
-			  System.out.println("Disconnected from database");
 		  } catch (Exception e) {
 			  e.printStackTrace();
 		  }
@@ -76,7 +105,6 @@ public class SimpleSelect {
 		  try {
 			  DBConnection db = new DBConnection();
 			  conn = db.getConnection();
-			  System.out.println("Connected to the database");
 
 			  String sql = "select max(closing_date) "
 				  + "from most_active_stocks "
@@ -130,7 +158,7 @@ public class SimpleSelect {
 					Stock stock = new Stock();
 			    	String stockSymbol = rs2.getString(1);
 					double lastPrice = rs2.getDouble(2);
-					long stockValue = rs2.getLong(3);
+					double stockValue = rs2.getDouble(3);
 					Date closingDate = rs2.getDate(4);
 					stock.setStockSymbol(stockSymbol);
 					stock.setLastPrice(lastPrice);
@@ -140,7 +168,6 @@ public class SimpleSelect {
 			    }
 				historicalMap.put("stocksList",stocks);
 			  conn.close();
-			  System.out.println("Disconnected from database");
 		  } catch (Exception e) {
 			  e.printStackTrace();
 		  }
