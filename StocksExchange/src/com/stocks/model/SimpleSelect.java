@@ -10,9 +10,9 @@ import java.math.RoundingMode;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -20,6 +20,13 @@ import java.util.HashMap;
 import java.util.Date;
 import java.util.StringTokenizer;
 
+import java.util.Properties;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import com.stocks.model.DBConnection;
 
 public class SimpleSelect {
@@ -445,5 +452,88 @@ public class SimpleSelect {
                 return 1;
         }
 		return 0;
+	}
+	
+	public void sendStocksUpdates(){
+		
+		String tableData = buildBestBuyData(getHighFrequencyStocks());
+		final String username = "test.email.july.2016@gmail.com";
+		final String password = "TestAccount";
+
+		Properties props = new Properties();
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "587");
+
+		Session session = Session.getInstance(props,new GMailAuthenticator(username, password));
+
+		try {
+
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress("test.email.july.2016@gmail.com"));
+			message.setRecipients(Message.RecipientType.TO,
+				InternetAddress.parse("bendeleonjr@hotmail.com"));
+			message.setSubject("Stocks Updates");
+			message.setContent(tableData, "text/html" );
+
+			Transport.send(message);
+
+			System.out.println("Message Sent!");
+
+		} catch (MessagingException e) {
+			throw new RuntimeException(e);
+		}	
+	}
+	
+	public String buildBestBuyData(List<Stock> stocks){
+		String htmltable = 
+		"<table border = '1'>" +
+		"<tr>" +
+		"<td>Rank</td>" +
+		"<td>Stock Symbol</td>" +
+		"<td>Frequency</td>" +
+		"<td>Total Value</td>" +
+		"<td>Latest Most Active</td>" +
+		"<td>Low</td>" +
+		"<td>High</td>" +
+		"<td>Buy Price</td>" +
+		"<td>Sell Price</td>" +
+		"<td>How Close</td>" +
+	    "</tr>";
+		
+		DecimalFormat df = new DecimalFormat("#,###.00");
+		int ctr = 0;
+		for(Stock s: stocks){
+			ctr++;
+			if (s.getPercentHowClose().doubleValue() > 0.0 && s.getPercentHowClose().doubleValue() <= 100.0 ){
+				htmltable = htmltable +
+						"<tr>" +
+						"<td>" + ctr + "</td>" +
+						"<td>" + s.getStockSymbol() +"</td>" +
+						"<td>" + s.getFrequency() +"</td>" +
+						"<td>" + df.format(s.getTotalStockValue()) + "</td>" +
+						"<td>" + s.getLatestMostActive() + "</td>" +
+						"<td>" + s.getLow() + "</td>" +
+						"<td>" + s.getHigh() + "</td>" +
+						"<td>" + s.getLastPrice() + "</td>" +
+						"<td>" + s.getTargetPrice() + "</td>" +
+						"<td>" + s.getPercentHowClose() + "</td>" +
+					    "</tr>";		
+			}
+		}
+		htmltable = htmltable + "</table>";
+		return htmltable;
+	}
+	
+	public void stocksMonitoring(String tradingDate){
+		removeData(tradingDate);
+		int importResult = importData(viewDataFromPSE());
+		if(importResult == 0){
+			System.out.println("Successfully imported stocks data.");
+		} else {
+			System.out.println("Import of stocks data has failed.");
+		}
+		sendStocksUpdates();
 	}
 }
