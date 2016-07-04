@@ -12,7 +12,9 @@ import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -67,10 +69,10 @@ public class SimpleSelect {
 					stock.setStockSymbol(stockSymbol);
 					stock.setFrequency(frequency);
 					stock.setTotalStockValue(new BigDecimal(totalValue).setScale(2, RoundingMode.CEILING));
-					Map<String, Object> historicalmap = getHistoricalData(stockSymbol);
-					Date latestMostActive = (Date) historicalmap.get("latestMostActive");
+					Map<String, Object> historicalmap = getHistoricalData();
+					Date latestMostActive = (Date) historicalmap.get(stockSymbol+"latestMostActive");
 					stock.setLatestMostActive(latestMostActive);
-					List<Stock> stocksList = (List<Stock>)historicalmap.get("stocksList");
+					List<Stock> stocksList = (List<Stock>)historicalmap.get(stockSymbol);
 					int ctr = 0;
 					double low1 = 0.0;
 					double high1 = 0.0;
@@ -132,9 +134,10 @@ public class SimpleSelect {
 				  +   "WHERE rnum BETWEEN 1 AND 10 "
 				  + ") a "
 				  + ") "
-				  + "and stock_symbol = '"+ symbol + "'";
+				  + "and stock_symbol = ? ";
 
 			    PreparedStatement prest = conn.prepareStatement(sql);
+			    prest.setString(1, symbol);
 			    ResultSet rs = prest.executeQuery();
 			    while (rs.next()){
 					historicalMap.put("latestMostActive",rs.getDate(1));
@@ -160,10 +163,11 @@ public class SimpleSelect {
 				  +   "WHERE rnum BETWEEN 1 AND 10 "				  
 				  + ") a "
 				  + ") "
-				  + "and stock_symbol = '"+ symbol + "' "
+				  + "and stock_symbol = ? "
 				  + "order by last_trading_price asc";
 
 			    PreparedStatement prest2 = conn.prepareStatement(sql2);
+			    prest2.setString(1, symbol);
 			    ResultSet rs2 = prest2.executeQuery();
 			    while (rs2.next()){
 					Stock stock = new Stock();
@@ -492,11 +496,14 @@ public class SimpleSelect {
 
 			Transport.send(message);
 
-			System.out.println("Message Sent!");
+			DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			System.out.println("Message Sent on: " + dateFormatter.format(new Date()));
 
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);
-		}	
+		} catch (Exception ex){
+			System.out.println("Exception thrown: " + ex.getMessage());
+		}
 	}
 	
 	public String buildBestBuyData(List<Stock> stocks){
@@ -548,5 +555,79 @@ public class SimpleSelect {
 			System.out.println("Import of stocks data has failed.");
 		}
 		sendStocksUpdates();
+	}
+
+	public Map<String,Object> getHistoricalData() {
+		  Connection conn = null;
+		  List<Stock> stocks = null;
+		  Map<String,Object> historicalMap = new HashMap<String,Object>();
+		  try {
+			  DBConnection db = new DBConnection();
+			  conn = db.getConnection();
+
+			  String sql2 = "select stock_symbol, last_trading_price, stock_value, closing_date "
+				  + "from most_active_stocks "
+				  + "where closing_date IN ( "
+				  + "select a.closedate "
+				  + "from ( "
+				  +  "SELECT * "
+				  +  "FROM (SELECT ROWNUM rnum "
+				  +  "          ,b.* "
+				  +        "FROM ( "
+				  +          "select distinct closing_date as closedate " 
+				  +          "from most_active_stocks " 
+				  +          "order by closing_date desc "
+				  +       ") b "
+				  +   ") "
+				  +   "WHERE rnum BETWEEN 1 AND 10 "				  
+				  + ") a "
+				  + ") "
+				  + "order by stock_symbol asc, last_trading_price asc";
+
+			    PreparedStatement prest2 = conn.prepareStatement(sql2);
+			    ResultSet rs2 = prest2.executeQuery();
+			    String prevStockSymbol = null;
+			    Date latestMostActive = null;
+			    while (rs2.next()){
+					Stock stock = new Stock();
+			    	String stockSymbol = rs2.getString(1);
+					double lastPrice = rs2.getDouble(2);
+					double stockValue = rs2.getDouble(3);
+					Date closingDate = rs2.getDate(4);
+					stock.setStockSymbol(stockSymbol);
+					stock.setLastPrice(lastPrice);
+					stock.setStockValue(new BigDecimal(stockValue).setScale(2, RoundingMode.CEILING));
+					stock.setClosingDate(closingDate);
+					
+					if(prevStockSymbol == null){
+						prevStockSymbol = stockSymbol;
+						latestMostActive = closingDate;
+					}
+			    	if(prevStockSymbol!=null && !prevStockSymbol.equals(stockSymbol)){
+			    		historicalMap.put(prevStockSymbol,stocks);
+			    		historicalMap.put(prevStockSymbol+"latestMostActive",latestMostActive);
+			    		stocks = new ArrayList<Stock>();
+			    		prevStockSymbol = stockSymbol;
+			    		latestMostActive = closingDate;
+			    	}
+			    	
+			    	if(closingDate.getTime() > latestMostActive.getTime()){
+			    		latestMostActive = closingDate;
+			    	}
+			    	
+			    	stocks.add(stock);
+			    	
+			    }
+			    historicalMap.put(prevStockSymbol,stocks);
+			    historicalMap.put(prevStockSymbol+"latestMostActive",latestMostActive);
+			    
+			    rs2.close();
+			    prest2.close();
+				historicalMap.put("stocksList",stocks);
+			  conn.close();
+		  } catch (Exception e) {
+			  e.printStackTrace();
+		  }
+		  return historicalMap;
 	}
 }
