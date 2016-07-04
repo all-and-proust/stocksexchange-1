@@ -14,8 +14,8 @@ public class MyStockTaskScheduler {
 		
 		String tradingDate = dateFormatter2.format(new Date());
 		
-		//String startTime = tradingDate + " 09:40:00"; // put back here after testing
-		String startTime = tradingDate + " 14:30:00";
+		//String startTime = tradingDate + " 09:40:00"; put back this original value after testing
+		String startTime = tradingDate + " 22:35:00";
 		Date date = dateFormatter.parse(startTime);
 
 		Timer timer = new Timer();
@@ -26,7 +26,8 @@ public class MyStockTaskScheduler {
 		// 1 second = 1,000 milli seconds
 		// 1 minute = 60 seconds = 60,000 milli seconds
 		// 10 minutes = 600 seconds = 600,000
-		timer.scheduleAtFixedRate(new MyStockTask(), date, 600000);
+		timer.scheduleAtFixedRate(new MyStockTask(), date, 120000);
+		System.out.println("Stocks monitoring has started!");
 	}
 
 }

@@ -39,6 +39,11 @@
 	<servlet-class>com.stocks.web.DataImportPSE</servlet-class>
 </servlet>
 
+<servlet>
+	<servlet-name>Live Stocks Monitoring</servlet-name>
+	<servlet-class>com.stocks.web.LiveStocksMonitoring</servlet-class>
+</servlet>
+
 <servlet-mapping>
 	<servlet-name>Most Active</servlet-name>
 	<url-pattern>/MostActive.do</url-pattern>
@@ -72,6 +77,11 @@
 <servlet-mapping>
 	<servlet-name>Data Import PSE</servlet-name>
 	<url-pattern>/DataImportPSE.do</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>Live Stocks Monitoring</servlet-name>
+	<url-pattern>/LiveStocksMonitoring.do</url-pattern>
 </servlet-mapping>
 
 </web-app>

@@ -28,7 +28,7 @@ public class MyStockTask extends TimerTask {
 		}
 		if(new Date().getTime() > date1.getTime()){
 			cancel();
-			System.exit(1);
+			System.out.println("Live Stocks Monitoring is done!");
 		} else {
 			System.out.println("Interval " + ctr);
 			ss.stocksMonitoring(tradingDate);

@@ -46,6 +46,8 @@
 </table>
 <br/>
 <br/>
+<a href="LiveStocksMonitoring.do">Start Live Stocks Monitoring!</a>
+<br/>
 <a href="DataImport.do">Import Data From CSV!</a>
 <br/>
 <a href="DataImportPSEView.do">Import Data Directly from PSE!</a>

@@ -602,6 +602,7 @@ public class SimpleSelect {
 					if(prevStockSymbol == null){
 						prevStockSymbol = stockSymbol;
 						latestMostActive = closingDate;
+						stocks = new ArrayList<Stock>();
 					}
 			    	if(prevStockSymbol!=null && !prevStockSymbol.equals(stockSymbol)){
 			    		historicalMap.put(prevStockSymbol,stocks);
@@ -623,7 +624,6 @@ public class SimpleSelect {
 			    
 			    rs2.close();
 			    prest2.close();
-				historicalMap.put("stocksList",stocks);
 			  conn.close();
 		  } catch (Exception e) {
 			  e.printStackTrace();
