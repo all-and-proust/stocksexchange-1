@@ -98,6 +98,8 @@ public class SimpleSelect {
 					stock.setTargetPrice(new BigDecimal(targetprice).setScale(2, RoundingMode.CEILING));
 					stocks.add(stock);
 			    }
+			    rs.close();
+			    prest.close();
 			  conn.close();
 		  } catch (Exception e) {
 			  e.printStackTrace();
@@ -137,6 +139,8 @@ public class SimpleSelect {
 			    while (rs.next()){
 					historicalMap.put("latestMostActive",rs.getDate(1));
 			    }
+			    rs.close();
+			    prest.close();
 
 
 			  String sql2 = "select stock_symbol, last_trading_price, stock_value, closing_date "
@@ -173,6 +177,8 @@ public class SimpleSelect {
 					stock.setClosingDate(closingDate);
 					stocks.add(stock);
 			    }
+			    rs2.close();
+			    prest2.close();
 				historicalMap.put("stocksList",stocks);
 			  conn.close();
 		  } catch (Exception e) {
@@ -262,6 +268,7 @@ public class SimpleSelect {
           			  	prest.setDouble(2, lastPrice);
           			  	prest.setDate(3,java.sql.Date.valueOf(tradingDate));
           			  	int count = prest.executeUpdate();
+          			    prest.close();
           			  	System.out.println(count + "row(s) affected");
 			         }
 			         br.close(); //release the resources
@@ -327,6 +334,7 @@ public class SimpleSelect {
 		        	prest.setBigDecimal(4, new BigDecimal(Double.parseDouble(sds.get("totalVolume")) * Double.parseDouble(sds.get("lastTradedPrice"))).setScale(2, RoundingMode.CEILING));
 		        	prest.setDate(5,java.sql.Date.valueOf(tradingDate));
 		        	prest.executeUpdate();
+		        	prest.close();
 		        }
 			}
 			
@@ -345,6 +353,7 @@ public class SimpleSelect {
              PreparedStatement prest2 = conn.prepareStatement(sql2);
              prest2.setDate(1,java.sql.Date.valueOf(tradingDate));
              prest2.executeUpdate();
+             prest2.close();
 			 conn.close();
 		}
         catch(Exception e)
@@ -376,6 +385,8 @@ public class SimpleSelect {
 					stock.setFrequency(frequency);					
 					stocks.add(stock);
 			    }
+			    rs.close();
+			    prest.close();
 			  conn.close();
 			  System.out.println("Disconnected from database");
 		  } catch (Exception e) {
@@ -438,11 +449,13 @@ public class SimpleSelect {
 			PreparedStatement prest = conn.prepareStatement(sql);
 			prest.setDate(1,java.sql.Date.valueOf(tradingDate));
 			prest.executeUpdate();
+			prest.close();
 
 			String sql2 = "DELETE FROM most_active_stocks WHERE closing_date = ? ";
 			PreparedStatement prest2 = conn.prepareStatement(sql2);
 			prest2.setDate(1,java.sql.Date.valueOf(tradingDate));
 			prest2.executeUpdate();
+			prest2.close();
 
 			conn.close();
 		}
