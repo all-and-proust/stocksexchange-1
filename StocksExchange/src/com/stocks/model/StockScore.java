@@ -11,7 +11,7 @@ public class StockScore {
 	private double low;
 	private double high;
 	private double howClose;
-	public static final double ROI = 1.03;
+	public static final double ROI = 1.01;
 	public static final double BUY_SELL_CHARGE = 50.0;
 
 	public String getSymbol() {

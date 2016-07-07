@@ -89,7 +89,7 @@ public class SimpleSelect {
 							cps = s.getLastPrice();
 						}
 					}
-					double targetprice = cps * 1.03;
+					double targetprice = cps * 1.01;
 					BigDecimal howClose = new BigDecimal(-1);
 					if(high1 != low1)
 						howClose = new BigDecimal((targetprice-low1)/(high1-low1) * 100).setScale(2, RoundingMode.CEILING);
@@ -491,7 +491,7 @@ public class SimpleSelect {
 			message.setFrom(new InternetAddress("test.email.july.2016@gmail.com"));
 			message.setRecipients(Message.RecipientType.TO,
 				InternetAddress.parse("bendeleonjr@hotmail.com"));
-			message.setSubject("Stocks Updates");
+			message.setSubject("Stocks Updates - 1% ROI");
 			message.setContent(tableData, "text/html" );
 
 			Transport.send(message);
@@ -526,7 +526,7 @@ public class SimpleSelect {
 		int ctr = 0;
 		for(Stock s: stocks){
 			ctr++;
-			if (s.getPercentHowClose().doubleValue() > 0.0 && s.getPercentHowClose().doubleValue() <= 100.0 ){
+			if (s.getPercentHowClose().doubleValue() > 0.0 && s.getPercentHowClose().doubleValue() <= 50.0 ){
 				htmltable = htmltable +
 						"<tr>" +
 						"<td>" + ctr + "</td>" +
@@ -545,7 +545,7 @@ public class SimpleSelect {
 		htmltable = htmltable + "</table>";
 		return htmltable;
 	}
-	
+
 	public void stocksMonitoring(String tradingDate){
 		removeData(tradingDate);
 		int importResult = importData(viewDataFromPSE());
@@ -629,5 +629,48 @@ public class SimpleSelect {
 			  e.printStackTrace();
 		  }
 		  return historicalMap;
+	}
+	public String buildSellStocksData(List<Stock> sellStocks){
+		String htmltable = 
+		"<table border = '1'>" +
+		"<tr>" +
+		"<td>Stock Symbol</td>" +
+		"<td>Best Bid</td>" +
+	    "</tr>";
+		
+		DecimalFormat df = new DecimalFormat("#,###.00");
+		for(Stock s: sellStocks){
+			if (s.getPercentHowClose().doubleValue() > 0.0 && s.getPercentHowClose().doubleValue() <= 50.0 ){
+				htmltable = htmltable +
+						"<tr>" +
+						"<td>" + s.getStockSymbol() +"</td>" +
+						"<td>" + s.getLastPrice() + "</td>" +
+					    "</tr>";		
+			}
+		}
+		htmltable = htmltable + "</table>";
+		return htmltable;
+	}
+
+	public String buildBuyStocksData(List<Stock> sellStocks){
+		String htmltable = 
+		"<table border = '1'>" +
+		"<tr>" +
+		"<td>Stock Symbol</td>" +
+		"<td>Best Offer</td>" +
+	    "</tr>";
+		
+		DecimalFormat df = new DecimalFormat("#,###.00");
+		for(Stock s: sellStocks){
+			if (s.getPercentHowClose().doubleValue() > 0.0 && s.getPercentHowClose().doubleValue() <= 50.0 ){
+				htmltable = htmltable +
+						"<tr>" +
+						"<td>" + s.getStockSymbol() +"</td>" +
+						"<td>" + s.getLastPrice() + "</td>" +
+					    "</tr>";		
+			}
+		}
+		htmltable = htmltable + "</table>";
+		return htmltable;
 	}
 }

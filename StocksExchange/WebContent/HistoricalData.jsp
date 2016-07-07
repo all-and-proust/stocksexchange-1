@@ -65,7 +65,7 @@ int freq = Integer.parseInt(frequency);
 	<%
 		}
 	}
-	double targetprice = cps * 1.03;
+	double targetprice = cps * 1.01;
 	BigDecimal howClose = new BigDecimal(-1);
 	if(high1 != low1)
 		howClose = new BigDecimal((targetprice-low1)/(high1-low1) * 100).setScale(2, RoundingMode.CEILING);
