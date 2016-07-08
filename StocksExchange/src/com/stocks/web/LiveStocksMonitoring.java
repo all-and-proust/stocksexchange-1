@@ -20,7 +20,7 @@ public class LiveStocksMonitoring extends HttpServlet {
 			String tradingDate = dateFormatter2.format(new Date());
 			
 			String startTime = tradingDate + " 09:40:00";//this is original. put this back after testing.
-			//String startTime = tradingDate + " 13:10:00"; //testing
+			//String startTime = tradingDate + " 13:50:00"; //testing
 			Date date = dateFormatter.parse(startTime);
 
 			Timer timer = new Timer();
@@ -31,7 +31,7 @@ public class LiveStocksMonitoring extends HttpServlet {
 			// 1 second = 1,000 milli seconds
 			// 1 minute = 60 seconds = 60,000 milli seconds
 			// 10 minutes = 600 seconds = 600,000
-			timer.scheduleAtFixedRate(new MyStockTask(), date, 600000);
+			timer.scheduleAtFixedRate(new MyStockTask(), date, 1800000);
 			System.out.println("Live Stocks monitoring has started!");			
 		} catch (Exception ex){
 			System.out.println("Exception: " + ex.getMessage());
