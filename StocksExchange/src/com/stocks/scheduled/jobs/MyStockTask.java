@@ -5,11 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimerTask;
 
-import com.stocks.model.SimpleSelect;
+import com.stocks.model.dao.impl.StocksDaoImpl;
 
 public class MyStockTask extends TimerTask {
 	int ctr = 0;
-	SimpleSelect ss = new SimpleSelect();
+	StocksDaoImpl ss = new StocksDaoImpl();
 	public void run(){
 		ctr++;
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

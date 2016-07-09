@@ -4,6 +4,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 import com.stocks.model.*;
+import com.stocks.model.dao.impl.StocksDaoImpl;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -28,7 +30,7 @@ public class AnalyzeStock extends HttpServlet {
 		//out.println("<br/>High (hidden): " + request.getParameter("high"));
 		//out.println("<br/>Number of Shares: " + request.getParameter("numshare"));
 		//out.println("<br/>Cost Per Share: " + request.getParameter("costpershare"));
-		StockScore stockScore = new SimpleSelect().getStockScore(symbol,numShare,costPerShare,low,high);
+		StockScore stockScore = new StocksDaoImpl().getStockScore(symbol,numShare,costPerShare,low,high);
 		//for(Stock s: stocks){
 		//	out.println("<br><br>Stock Symbol: " + s.getStockSymbol());
 		//	out.println("<br>Stock Frequency: " + s.getFrequency());

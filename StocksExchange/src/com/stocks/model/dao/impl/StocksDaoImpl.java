@@ -1,4 +1,4 @@
-package com.stocks.model;
+package com.stocks.model.dao.impl;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,8 +30,11 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import com.stocks.model.DBConnection;
+import com.stocks.model.GMailAuthenticator;
+import com.stocks.model.Stock;
+import com.stocks.model.StockScore;
 
-public class SimpleSelect {
+public class StocksDaoImpl {
 
 	public List<Stock> getHighFrequencyStocks() {
 		  Connection conn = null;

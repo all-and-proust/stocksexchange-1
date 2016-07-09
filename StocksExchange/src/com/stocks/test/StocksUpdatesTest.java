@@ -3,12 +3,12 @@ package com.stocks.test;
 import java.util.List;
 import java.util.Map;
 
-import com.stocks.model.SimpleSelect;
+import com.stocks.model.dao.impl.StocksDaoImpl;
 
 public class StocksUpdatesTest {
 
 	public static void main(String[] args) {
-		SimpleSelect ss = new SimpleSelect();
+		StocksDaoImpl ss = new StocksDaoImpl();
 		ss.removeData("2016-07-01");
 		List<Map<String,String>> liveDataFromPSE = ss.viewDataFromPSE();
 		int importResult = ss.importData(liveDataFromPSE);

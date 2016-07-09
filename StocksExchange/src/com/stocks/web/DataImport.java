@@ -4,6 +4,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 import com.stocks.model.*;
+import com.stocks.model.dao.impl.StocksDaoImpl;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -16,7 +18,7 @@ public class DataImport extends HttpServlet {
 		//response.setContentType("text/html");
 		//PrintWriter out = response.getWriter();
 
-		Map<String,Object> importResult = new SimpleSelect().importData();
+		Map<String,Object> importResult = new StocksDaoImpl().importData();
 
 		request.setAttribute("importResult",importResult);
 		RequestDispatcher view = request.getRequestDispatcher("DataImport.jsp");
