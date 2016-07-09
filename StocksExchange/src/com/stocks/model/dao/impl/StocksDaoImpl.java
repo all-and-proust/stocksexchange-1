@@ -33,8 +33,9 @@ import com.stocks.model.DBConnection;
 import com.stocks.model.GMailAuthenticator;
 import com.stocks.model.Stock;
 import com.stocks.model.StockScore;
+import com.stocks.model.dao.StocksDao;
 
-public class StocksDaoImpl {
+public class StocksDaoImpl implements StocksDao {
 
 	public List<Stock> getHighFrequencyStocks() {
 		  Connection conn = null;
