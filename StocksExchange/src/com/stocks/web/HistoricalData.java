@@ -4,6 +4,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 import com.stocks.model.*;
+import com.stocks.model.dao.StocksDao;
 import com.stocks.model.dao.impl.StocksDaoImpl;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class HistoricalData extends HttpServlet {
 		
 		//response.setContentType("text/html");
 		//PrintWriter out = response.getWriter();
-		StocksDaoImpl ss = new StocksDaoImpl();
+		StocksDao ss = new StocksDaoImpl();
 		Map<String,Object> historicalDataMap = ss.getHistoricalData(request.getParameter("symbol"));
 		//out.println("Stock Symbol: " + );		
 		//for(Stock s: stocks){

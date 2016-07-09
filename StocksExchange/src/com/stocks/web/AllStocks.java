@@ -4,6 +4,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
 import com.stocks.model.*;
+import com.stocks.model.dao.StocksDao;
 import com.stocks.model.dao.impl.StocksDaoImpl;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class AllStocks extends HttpServlet {
 		
 		//response.setContentType("text/html");
 		//PrintWriter out = response.getWriter();
-		StocksDaoImpl ss = new StocksDaoImpl();
+		StocksDao ss = new StocksDaoImpl();
 		List<Stock> stocks = ss.getAllStocks();
 		//out.println("Top Most Active Stocks In The Last 20 Trading Days!<br>");		
 		//for(Stock s: stocks){
