@@ -3,16 +3,17 @@ package com.stocks.scheduled.jobs;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.TimerTask;
 
+import com.stocks.model.StockBase;
 import com.stocks.model.business.StocksBusiness;
 import com.stocks.model.business.impl.StocksBusinessImpl;
 
-public class MyStockTask extends TimerTask {
-	int ctr = 0;
+public class BuySellTask extends TimerTask {
 	StocksBusiness sb = new StocksBusinessImpl();
 	public void run(){
-		ctr++;
 		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		DateFormat dateFormatter2 = new SimpleDateFormat("yyyy-MM-dd");
 		Date date1 = null;
@@ -21,12 +22,12 @@ public class MyStockTask extends TimerTask {
 		String tradingDate = null;
 		try{
 			tradingDate = dateFormatter2.format(new Date());
-			String endTime = tradingDate + " 15:40:00";
+			String endTime = tradingDate + " 15:35:00";
 			date1 = dateFormatter.parse(endTime);
 			
-			String recessTime = tradingDate + " 12:04:00";
+			String recessTime = tradingDate + " 12:00:00";
 			recessDate = dateFormatter.parse(recessTime);
-			String resumeTime = tradingDate + " 13:26:00";
+			String resumeTime = tradingDate + " 13:30:00";
 			resumeDate = dateFormatter.parse(resumeTime);
 
 			System.out.println("Trading Date: " + tradingDate);
@@ -35,13 +36,30 @@ public class MyStockTask extends TimerTask {
 			System.out.println("Exception: " + ex.getMessage());
 		}
 		if(new Date().getTime() > recessDate.getTime() && new Date().getTime() < resumeDate.getTime()){
-			System.out.println("Recess Time!");
+			System.out.println("Buy and Sell Monitoring is currently on recess!");
 		} else if(new Date().getTime() > date1.getTime()){
 			cancel();
-			System.out.println("Live Stocks Monitoring is done!");
+			System.out.println("Buy and Sell Monitoring is done!");
 		} else {
-			System.out.println("Interval " + ctr);
-			sb.sendStocksUpdates(tradingDate);
+			Map<String,List<StockBase>> buySell= sb.adviseBuySell(sb.viewDataFromPSE());
+			if(buySell.get("BUY").isEmpty()){
+				System.out.println("No best buy!");
+			} else {
+				List<StockBase> buyStocks = buySell.get("BUY");
+				System.out.println("Recommended stocks to BUY: ");
+				for(StockBase s: buyStocks){
+					System.out.println(s.getStockSymbol() + ": " + s.getLastPrice());
+				}
+			}
+			if(buySell.get("SELL").isEmpty()){
+				System.out.println("No best sell!");
+			} else {
+				List<StockBase> buyStocks = buySell.get("SELL");
+				System.out.println("Recommended stocks to SELL: ");
+				for(StockBase s: buyStocks){
+					System.out.println(s.getStockSymbol() + ": " + s.getLastPrice());
+				}
+			}		
 		}
 		
 	}

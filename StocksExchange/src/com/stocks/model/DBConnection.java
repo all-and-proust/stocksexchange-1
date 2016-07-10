@@ -1,6 +1,7 @@
 package com.stocks.model;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import javax.naming.Context;
@@ -10,8 +11,9 @@ import javax.sql.DataSource;
 
 public class DBConnection {
 
+
+	//db connection for unit testing
 	/*
-	 * uncomment this if you want to do unit testing
 	public Connection getConnection(){
 		Connection conn = null;
 		try {
@@ -27,6 +29,8 @@ public class DBConnection {
 		return conn;
 	}
 	*/
+	
+	//db connection for production
 	public Connection getConnection(){
 		Connection conn = null;
 		try {
