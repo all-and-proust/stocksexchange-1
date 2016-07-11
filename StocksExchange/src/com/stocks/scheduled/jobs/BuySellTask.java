@@ -29,33 +29,30 @@ public class BuySellTask extends TimerTask {
 			recessDate = dateFormatter.parse(recessTime);
 			String resumeTime = tradingDate + " 13:30:00";
 			resumeDate = dateFormatter.parse(resumeTime);
-
-			System.out.println("Trading Date: " + tradingDate);
-			System.out.println("End Time: " + endTime);
 		} catch (Exception ex){
-			System.out.println("Exception: " + ex.getMessage());
+			System.out.println("1% Exception: " + ex.getMessage());
 		}
 		if(new Date().getTime() > recessDate.getTime() && new Date().getTime() < resumeDate.getTime()){
-			System.out.println("Buy and Sell Monitoring is currently on recess!");
+			System.out.println("1% Buy and Sell Monitoring is currently on recess!");
 		} else if(new Date().getTime() > date1.getTime()){
 			cancel();
-			System.out.println("Buy and Sell Monitoring is done!");
+			System.out.println("1% Buy and Sell Monitoring is done!");
 		} else {
 			Map<String,List<StockBase>> buySell= sb.adviseBuySell(sb.viewDataFromPSE());
 			if(buySell.get("BUY").isEmpty()){
-				System.out.println("No best buy!");
+				System.out.println("1% No best buy!");
 			} else {
 				List<StockBase> buyStocks = buySell.get("BUY");
-				System.out.println("Recommended stocks to BUY: ");
+				System.out.println("1% Recommended stocks to BUY: ");
 				for(StockBase s: buyStocks){
 					System.out.println(s.getStockSymbol() + ": " + s.getLastPrice());
 				}
 			}
 			if(buySell.get("SELL").isEmpty()){
-				System.out.println("No best sell!");
+				System.out.println("1% No best sell!");
 			} else {
 				List<StockBase> buyStocks = buySell.get("SELL");
-				System.out.println("Recommended stocks to SELL: ");
+				System.out.println("1% Recommended stocks to SELL: ");
 				for(StockBase s: buyStocks){
 					System.out.println(s.getStockSymbol() + ": " + s.getLastPrice());
 				}
