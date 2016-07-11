@@ -4,7 +4,7 @@
 	<title>Most Active Stocks</title>
 </head>
 <body>
-<a href="PriceAlert.do">Price Alert</a> |
+<a href="PriceAlert.do">Price Alert</a> | 
 <a href="LiveStocksMonitoring.do">Start Live Stocks Monitoring!</a> | 
 <a href="DataImport.do">Import Data From CSV!</a> | 
 <a href="DataImportPSEView.do">Import Data Directly from PSE!</a> | 
