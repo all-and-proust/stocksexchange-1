@@ -45,7 +45,7 @@ public class BuySellTask extends TimerTask {
 				List<StockBase> buyStocks = buySell.get("BUY");
 				System.out.println("1% Recommended stocks to BUY: ");
 				for(StockBase s: buyStocks){
-					System.out.println(s.getStockSymbol() + ": " + s.getLastPrice());
+					System.out.println("(1%) " + s.getStockSymbol() + ": " + s.getLastPrice());
 				}
 			}
 			if(buySell.get("SELL").isEmpty()){
@@ -54,7 +54,7 @@ public class BuySellTask extends TimerTask {
 				List<StockBase> buyStocks = buySell.get("SELL");
 				System.out.println("1% Recommended stocks to SELL: ");
 				for(StockBase s: buyStocks){
-					System.out.println(s.getStockSymbol() + ": " + s.getLastPrice());
+					System.out.println("(1%) " + s.getStockSymbol() + ": " + s.getLastPrice());
 				}
 			}		
 		}
