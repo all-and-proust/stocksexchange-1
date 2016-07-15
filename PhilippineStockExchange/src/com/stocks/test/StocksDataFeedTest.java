@@ -2,14 +2,14 @@ package com.stocks.test;
 
 import java.util.Map;
 
-import com.stocks.model.dao.StocksDao;
-import com.stocks.model.dao.impl.StocksDaoImpl;
+import com.stocks.model.business.StocksBusiness;
+import com.stocks.model.business.impl.StocksBusinessImpl;
 
 public class StocksDataFeedTest {
 
 	public static void main(String[] args) {
-		StocksDao ss = new StocksDaoImpl();
-		Map<String,Object> msg = ss.importData();
+		StocksBusiness sb = new StocksBusinessImpl();
+		Map<String,Object> msg = sb.importData();
 		System.out.println("Message: " + msg.get("message"));
 	}
 

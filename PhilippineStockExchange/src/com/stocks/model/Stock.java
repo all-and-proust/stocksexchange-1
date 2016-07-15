@@ -12,6 +12,7 @@ public class Stock extends StockBase{
 	private double low;
 	private double high;
 	private BigDecimal totalStockValue;
+	private int rank;
 
 
 	public BigDecimal getStockValue() {
@@ -68,5 +69,10 @@ public class Stock extends StockBase{
 	public void setTotalStockValue(BigDecimal totalStockValue) {
 		this.totalStockValue = totalStockValue;
 	}
-	
+	public int getRank() {
+		return rank;
+	}
+	public void setRank(int rank) {
+		this.rank = rank;
+	}
 }
