@@ -164,7 +164,7 @@ public class StocksBusinessImpl implements StocksBusiness{
 		int ctr = 0;
 		for(Stock s: stocks){
 			ctr++;
-			if (s.getPercentHowClose().doubleValue() > 0.0 && s.getPercentHowClose().doubleValue() <= 50.0 ){
+			if (s.getPercentHowClose().doubleValue() > 0.0 && s.getPercentHowClose().doubleValue() <= 50.0 && s.getFrequency() == 10){
 				htmltable = htmltable +
 						"<tr>" +
 						"<td>" + ctr + "</td>" +
