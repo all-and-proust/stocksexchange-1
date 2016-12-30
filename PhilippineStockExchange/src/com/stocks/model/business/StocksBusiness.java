@@ -19,7 +19,7 @@ public interface StocksBusiness {
 	public void addPriceAlert(String stockSymbol, double buyPrice, double sellPrice);
 	public StockScore getStockScore(String symbol, int numShare, double costPerShare, double low, double high);
 	public List<Map<String,String>> viewDataFromPSE();
-	public void sendStocksUpdates(String tradingDate);
+	public void sendStocksUpdates();
 	public Map<String,List<StockBase>> adviseBuySell(List<Map<String,String>> stocksList);
 	public List<Stock> getHighFrequencyStocks(boolean isFullData, int lowRange, int highRange);
 	public void refreshMostActiveStocks(List<Stock> mostActiveStocks, List<Map<String,String>> freshStocks);

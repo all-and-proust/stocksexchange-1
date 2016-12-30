@@ -38,7 +38,7 @@ public class MyStockTask extends TimerTask {
 			System.out.println("1% Live Stocks Monitoring is done!");
 		} else {
 			System.out.println("1% Interval " + ctr);
-			sb.sendStocksUpdates(tradingDate);
+			sb.sendStocksUpdates();
 		}
 		
 	}

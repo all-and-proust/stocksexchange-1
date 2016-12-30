@@ -94,10 +94,21 @@ public class StocksBusinessImpl implements StocksBusiness{
 		return stocksList;
 	}
 
-	public void sendStocksUpdates(String tradingDate){
+	public void sendStocksUpdates(){
 		StocksDao sd = new StocksDaoImpl();
-		sd.removeStocksData(tradingDate);
+		String lastTradingDate = "";
 		List<Map<String,String>> stocksList = viewDataFromPSE();
+		for(Map<String,String> sds : stocksList){
+			if(sds.get("lastTradedPrice").equals("DATE")){
+				lastTradingDate = sds.get("securityAlias");
+				break;
+	        }
+		}
+		String[] nextTokenArr = lastTradingDate.substring(0, 10).split("/");
+		if(nextTokenArr.length > 1){
+			lastTradingDate = nextTokenArr[2] + "-" + nextTokenArr[0] +"-" + nextTokenArr[1];
+		}
+		sd.removeStocksData(lastTradingDate);
 		int importResult = sd.importLiveData(stocksList, 1, 50);
 		if(importResult == 0){
 			System.out.println("Successfully imported stocks data.");
